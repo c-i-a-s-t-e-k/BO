@@ -1,0 +1,90 @@
+# W - water, M - miracle, C1 - constriction , C2, C3, N - nothing, D - destenction
+# U - UP, D - Down, L - left, R - right
+
+# Level I
+I D L U R
+I D L U R
+I D L U R
+I D U D
+I M U D R
+I M U D R
+I M U D R
+I M U D R L
+I M U D R L
+I C1 U D
+I C1 U D
+I C1 U D
+I C1 L D
+I C1 L D
+I N L U D R
+I N L U D R
+I W U D L R
+I W U D L R
+I W U D L
+I W U D L
+
+# Level II
+II M L R D
+II M L R D
+II M L R D
+II M L R D
+II M L R D U
+II D L R
+II D R U D
+II D R U D
+II D R U D
+II N L R U D
+II W L U D R
+II W L U D R
+II W L D
+II W L D
+II W L U R
+II C1 U D
+II C1 U D
+II C1 L D
+II C2 L R
+II C2 U R
+
+# Level III
+III N U D L R
+III M L R D
+III M L R D
+III M L R D
+III M L R D U
+III M L R D U
+III M L
+III D D R
+III D L U D
+III D L U D
+III D L U D
+III D U
+III W U D
+III W L D
+III W L D
+III W L D U R
+III C3 U D
+III C2 L R
+III C2 L R
+III C1 U D
+
+# Level IV
+IV N U D L R
+IV W L D
+IV W U D
+IV W U D
+IV W U D
+IV M U
+IV M U
+IV M U D L R
+IV M U D R
+IV M U D R
+IV M U D R
+IV D L
+IV D L
+IV D R D
+IV D L R
+IV C3 U D
+IV C3 U D
+IV C2 R L
+IV C2 R L
+IV C2 R L
