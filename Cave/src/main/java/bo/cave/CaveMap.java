@@ -8,9 +8,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class CaveMap {
-    private static final String pathToTilesBase =
-            Thread.currentThread().getContextClassLoader().getResource("tiles.txt").getFile();
-    ;
     private final int mapSize = 100;
     private final MapTile[][] tiles;
     private final Map<Pair<Integer, Integer>, Set<Direction>> edges;
@@ -28,34 +25,41 @@ public class CaveMap {
         for (int i = 0; i < tmpBase.length; i++) {
             tiles[mapSize / 2 - 1 + (i % 3)][mapSize / 2 - 1 + (i / 3)] = tmpBase[i];
         }
-        edges = getMapEdges();
+        edges = new HashMap<>();
+        setMapEdges();
     }
 
     //    funkcja zwraca liste <x, y><lista>, gdzie x, y to wspórzędne do których można dołożyć kafeliki, a
 //    lista zawiera *Directions* kierunki kafelka do których można dołożyć
-    private Map<Pair<Integer, Integer>, Set<Direction>> getMapEdges() {
-        Map<Pair<Integer, Integer>, Set<Direction>> mapEdges = new HashMap<>();
-        if (isNotPlaced(getBasePosition())) return mapEdges;
+    private void setMapEdges() {
+        if (!isPlaced(getBasePosition())) return;
         Queue<Pair<Integer, Integer>> que = new LinkedList<>();
         que.add(getBasePosition());
+        Set<Pair<Integer, Integer>> visited = new HashSet<>();
 
         while (!que.isEmpty()) {
             Pair<Integer, Integer> currentPosition = que.poll();
-            mapEdges.putIfAbsent(currentPosition, new HashSet<>());
-            for (Direction direction : getTile(currentPosition).getExits()) {
-                Pair<Integer, Integer> possibleEdgePosition = direction.getNextPosition(currentPosition);
-
-                if (isNotPlaced(possibleEdgePosition)) {
-                    mapEdges.get(currentPosition).add(direction);
-                } else que.add(possibleEdgePosition);
-            }
-            if (mapEdges.get(currentPosition).isEmpty()) mapEdges.remove(currentPosition);
+            if (visited.contains(currentPosition)) continue;
+            visited.add(currentPosition);
+            que.addAll(setTileEdges(currentPosition));
         }
+    }
+    private List<Pair<Integer, Integer>> setTileEdges(Pair<Integer, Integer> position) {
+        List<Pair<Integer, Integer>> possibleEdgePositionList = new ArrayList<>();
+        edges.putIfAbsent(position, new HashSet<>());
+        for (Direction direction : getTile(position).getExits()) {
+            Pair<Integer, Integer> possibleEdgePosition = direction.getNextPosition(position);
 
-        return mapEdges;
+            if (!isPlaced(possibleEdgePosition)) {
+                edges.get(position).add(direction);
+            } else possibleEdgePositionList.add(possibleEdgePosition);
+        }
+        if (edges.get(position).isEmpty()) edges.remove(position);
+
+        return possibleEdgePositionList;
     }
 
-    private static List<MapTile>[] loadTilesFromFile() {
+    private static List<MapTile>[] loadTilesFromFile(String pathToTilesBase) {
         Scanner scanner = null;
         try {
             scanner = new Scanner(new File(pathToTilesBase));
@@ -79,16 +83,20 @@ public class CaveMap {
         return new Pair<>(mapSize / 2, mapSize / 2);
     }
 
-    private boolean isNotPlaced(Pair<Integer, Integer> position) {
+    public boolean isPlaced(Pair<Integer, Integer> position) {
         int x = position.getValue0();
         int y = position.getValue1();
-        return tiles[x][y] == null || tiles[x][y].getExits().isEmpty();
+        return !(tiles[x][y] == null || tiles[x][y].getExits().isEmpty());
     }
 
     private MapTile getTile(Pair<Integer, Integer> position) {
         int x = position.getValue0();
         int y = position.getValue1();
         return tiles[x][y];
+    }
+
+    public int getMapSize() {
+        return mapSize;
     }
 
     private boolean isInBounds(Pair<Integer, Integer> position) {
@@ -107,38 +115,54 @@ public class CaveMap {
 
     private boolean tryToConnect(Pair<Integer, Integer> from, Direction at, MapTile tile) {
         Pair<Integer, Integer> to = at.getNextPosition(from);
-        if (!isNotPlaced(to))
-            throw new IllegalArgumentException("cannot try to place on already placed position " + to);
+        if (isPlaced(to))
+            return false;
 
+        boolean canBeConnected = false;
         for (Pair<Integer, Integer> pos : getSurrounded(to)) {
             for (int i = 0; i < 4; i++) {
-                boolean canBeConnected = tile.canBeConnected();
+                for (Direction direction : tile.getExits()) {
+                    canBeConnected = tile.canBeConnected(getTile(pos), direction);
+                    if (canBeConnected) break;
+                }
                 if (canBeConnected) break;
+                tile.rotate();
             }
             if (canBeConnected) break;
         }
-        throw new RuntimeException("not implement yet");
+        if (canBeConnected) {
+            tile.setDepression(getTile(from));
+            tiles[to.getValue0()][to.getValue1()] = tile;
+            setTileEdges(to);
+            return true;
+        } else return false;
     }
 
     public static CaveMap generateCaveMap(long seed) {
-        return generateCaveMap(seed, 9);
+        return generateCaveMap(
+                seed,
+                9,
+                Thread.currentThread().getContextClassLoader().getResource("tiles.txt").getFile());
     }
 
-    public static CaveMap generateCaveMap(long seed, int removedTiles) {
+    public static CaveMap generateCaveMap(long seed, int removedTiles, String pathToTilesBase) {
         Random generator = new Random(seed);
         CaveMap caveMap = new CaveMap();
 
-        List<MapTile>[] tileByLevelList = loadTilesFromFile();
+        List<MapTile>[] tileByLevelList = loadTilesFromFile(pathToTilesBase);
 
         for (List<MapTile> tileList : tileByLevelList) {
             Collections.shuffle(tileList, generator);
             for (MapTile tile : tileList.subList(removedTiles, tileList.size())) {
+                boolean tileAdded = false;
                 List<Pair<Integer, Integer>> possibleAddCollection = new ArrayList<>(caveMap.edges.keySet());
                 Collections.shuffle(possibleAddCollection, generator);
                 for (Pair<Integer, Integer> from : possibleAddCollection) {
                     for (Direction direction : caveMap.edges.get(from)) {
-                        caveMap.tryToConnect(from, direction, tile);
+                        tileAdded = caveMap.tryToConnect(from, direction, tile);
+                        if (tileAdded) break;
                     }
+                    if (tileAdded) break;
                 }
             }
         }

@@ -7,7 +7,6 @@ public enum TileLevel {
     III,
     IV;
 
-
     public static TileLevel fromString(String string) {
         switch (string) {
             case "Base":

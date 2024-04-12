@@ -39,10 +39,10 @@ public enum Direction {
         int y = position.getValue1();
 
         return switch (this) {
-            case UP -> new Pair<>(x - 1, y);
-            case DOWN -> new Pair<>(x + 1, y);
-            case LEFT -> new Pair<>(x, y - 1);
-            case RIGHT -> new Pair<>(x, y + 1);
+            case UP -> new Pair<>(x, y - 1);
+            case DOWN -> new Pair<>(x, y + 1);
+            case LEFT -> new Pair<>(x - 1, y);
+            case RIGHT -> new Pair<>(x + 1, y);
             default -> throw new IllegalArgumentException("Invalid direction: " + this);
         };
     }

@@ -14,52 +14,55 @@ public class MapTile {
     private TileStatus status;
     private final Set<Direction> exits = new HashSet<>();
 
-    private MapTile(){
+    private MapTile() {
         type = TileType.NOTHING;
         depression = 0;
-        level =TileLevel.Base;
+        level = TileLevel.Base;
         status = TileStatus.CONQUERED;
     }
 
-    public MapTile(String input){
+    public MapTile(String input) {
         String[] split = input.split(" ");
 
         level = TileLevel.fromString(split[0]);
         type = TileType.fromString(split[1]);
-        for(int i = 2; i < split.length; i++){
+        for (int i = 2; i < split.length; i++) {
             exits.add(Direction.fromString(split[i]));
         }
         this.status = TileStatus.NOT_DISCOVERED;
     }
 
-    public TileLevel getLevel(){
+    public TileLevel getLevel() {
         return level;
     }
-    public List<Direction> getExits(){
+
+    public List<Direction> getExits() {
         return List.copyOf(exits);
     }
 
-    public void rotate(){
+    public void rotate() {
         Collection<Direction> directions = getExits();
         exits.clear();
         exits.addAll(directions.stream().map(Direction::next).toList());
     }
 
-    public boolean canBeConnected(MapTile other, Direction by){
-        if(other == null || other.type == TileType.ROCK){return true;}
-        else if(!exits.contains(by)){return false;}
-        else return other.exits.contains(by.opposite());
+    public boolean canBeConnected(MapTile other, Direction by) {
+        if (other == null || other.type == TileType.ROCK) {
+            return true;
+        } else if (!exits.contains(by)) {
+            return false;
+        } else return other.exits.contains(by.opposite());
     }
 
     public void setDepression(MapTile prevTile) {
-        if (prevTile.type == TileType.DESCENSION) {
+        if (this.type == TileType.DESCENSION) {
             this.depression = prevTile.depression + 25;
         } else this.depression = prevTile.depression;
 
-        if(depression % 25 != 0) throw new IllegalArgumentException("Invalid depression");
+        if (depression % 25 != 0) throw new IllegalArgumentException("Invalid depression");
     }
 
-//    zwraca tablice 9 elementową reprezentująca baze
+    //    zwraca tablice 9 elementową reprezentująca baze
 //    baza składa się z kafelków Normalnych oraz skał (tylko na środkowym można oddnwiać zasoby)
 //    baza wygląda tak:
 //   .   _____   .
@@ -70,7 +73,7 @@ public class MapTile {
 //     N   N   N
 //   .   _____   .
 // ]
-    public static MapTile[] getBase(){
+    public static MapTile[] getBase() {
         MapTile[] base = {
                 new MapTile(), new MapTile(), new MapTile(),
                 new MapTile(), new MapTile(), new MapTile(),
