@@ -16,8 +16,6 @@ public class CaveMap {
         throw new RuntimeException("not implemented yet");
     }
 
-    ;
-
     private CaveMap() {
         tiles = new MapTile[mapSize][mapSize];
         MapTile[] tmpBase = MapTile.getBase();
@@ -60,13 +58,13 @@ public class CaveMap {
     }
 
     private static List<MapTile>[] loadTilesFromFile(String pathToTilesBase) {
-        Scanner scanner = null;
+        Scanner scanner;
         try {
             scanner = new Scanner(new File(pathToTilesBase));
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File not found" + e);
         }
-        List<MapTile>[] tileByLevelList = new List[]{
+        ArrayList<MapTile>[] tileByLevelList = new ArrayList[]{
                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
         };
 
