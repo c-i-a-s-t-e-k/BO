@@ -50,7 +50,7 @@ public class MapTile {
         if (other == null || other.type == TileType.ROCK) {
             return true;
         } else if (!exits.contains(by)) {
-            return false;
+            return !other.exits.contains(by.opposite());
         } else return other.exits.contains(by.opposite());
     }
 

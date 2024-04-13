@@ -42,6 +42,7 @@ public class CaveMap {
             que.addAll(setTileEdges(currentPosition));
         }
     }
+
     private List<Pair<Integer, Integer>> setTileEdges(Pair<Integer, Integer> position) {
         List<Pair<Integer, Integer>> possibleEdgePositionList = new ArrayList<>();
         edges.putIfAbsent(position, new HashSet<>());
@@ -117,15 +118,12 @@ public class CaveMap {
             return false;
 
         boolean canBeConnected = false;
-        for (Pair<Integer, Integer> pos : getSurrounded(to)) {
-            for (int i = 0; i < 4; i++) {
-                for (Direction direction : tile.getExits()) {
-                    canBeConnected = tile.canBeConnected(getTile(pos), direction);
-                    if (canBeConnected) break;
-                }
-                if (canBeConnected) break;
-                tile.rotate();
+        for (int i = 0; i < 4; i++) {
+            for (Direction direction : Direction.values()) {
+                canBeConnected = tile.canBeConnected(getTile(direction.getNextPosition(to)), direction);
+                if (!canBeConnected) break;
             }
+            tile.rotate();
             if (canBeConnected) break;
         }
         if (canBeConnected) {
