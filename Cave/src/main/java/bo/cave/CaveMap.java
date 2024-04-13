@@ -10,7 +10,7 @@ import java.util.*;
 public class CaveMap {
     private final int mapSize = 100;
     private final MapTile[][] tiles;
-    private final Map<Pair<Integer, Integer>, Set<Direction>> edges;
+    private final Set<Pair<Integer, Integer>> edges;
 
     public void saveMap(String filename) {
         throw new RuntimeException("not implemented yet");
@@ -23,7 +23,7 @@ public class CaveMap {
         for (int i = 0; i < tmpBase.length; i++) {
             tiles[mapSize / 2 - 1 + (i % 3)][mapSize / 2 - 1 + (i / 3)] = tmpBase[i];
         }
-        edges = new HashMap<>();
+        edges = new HashSet<>();
         setMapEdges();
     }
 
@@ -45,15 +45,13 @@ public class CaveMap {
 
     private List<Pair<Integer, Integer>> setTileEdges(Pair<Integer, Integer> position) {
         List<Pair<Integer, Integer>> possibleEdgePositionList = new ArrayList<>();
-        edges.putIfAbsent(position, new HashSet<>());
         for (Direction direction : getTile(position).getExits()) {
             Pair<Integer, Integer> possibleEdgePosition = direction.getNextPosition(position);
 
             if (!isPlaced(possibleEdgePosition)) {
-                edges.get(position).add(direction);
+                edges.add(possibleEdgePosition);
             } else possibleEdgePositionList.add(possibleEdgePosition);
         }
-        if (edges.get(position).isEmpty()) edges.remove(position);
 
         return possibleEdgePositionList;
     }
@@ -112,24 +110,31 @@ public class CaveMap {
         return result;
     }
 
-    private boolean tryToConnect(Pair<Integer, Integer> from, Direction at, MapTile tile) {
-        Pair<Integer, Integer> to = at.getNextPosition(from);
-        if (isPlaced(to))
+    private boolean tryToConnect(Pair<Integer, Integer> place, MapTile tile) {
+        if (isPlaced(place))
             return false;
 
         boolean canBeConnected = false;
         for (int i = 0; i < 4; i++) {
             for (Direction direction : Direction.values()) {
-                canBeConnected = tile.canBeConnected(getTile(direction.getNextPosition(to)), direction);
+                canBeConnected = tile.isMatch(getTile(direction.getNextPosition(place)), direction);
                 if (!canBeConnected) break;
             }
-            tile.rotate();
             if (canBeConnected) break;
+            tile.rotate();
         }
         if (canBeConnected) {
-            tile.setDepression(getTile(from));
-            tiles[to.getValue0()][to.getValue1()] = tile;
-            setTileEdges(to);
+            for (Direction direction : Direction.values()) {
+                MapTile possibleOrigin = getTile(direction.getNextPosition(place));
+                canBeConnected = tile.isPath(possibleOrigin, direction);
+                if (canBeConnected) {
+                    tile.setDepression(possibleOrigin);
+                    break;
+                }
+            }
+            tiles[place.getValue0()][place.getValue1()] = tile;
+            edges.remove(place);
+            setTileEdges(place);
             return true;
         } else return false;
     }
@@ -150,14 +155,11 @@ public class CaveMap {
         for (List<MapTile> tileList : tileByLevelList) {
             Collections.shuffle(tileList, generator);
             for (MapTile tile : tileList.subList(removedTiles, tileList.size())) {
-                boolean tileAdded = false;
-                List<Pair<Integer, Integer>> possibleAddCollection = new ArrayList<>(caveMap.edges.keySet());
+                boolean tileAdded;
+                List<Pair<Integer, Integer>> possibleAddCollection = new ArrayList<>(caveMap.edges);
                 Collections.shuffle(possibleAddCollection, generator);
-                for (Pair<Integer, Integer> from : possibleAddCollection) {
-                    for (Direction direction : caveMap.edges.get(from)) {
-                        tileAdded = caveMap.tryToConnect(from, direction, tile);
-                        if (tileAdded) break;
-                    }
+                for (Pair<Integer, Integer> possiblePlace : possibleAddCollection) {
+                    tileAdded = caveMap.tryToConnect(possiblePlace, tile);
                     if (tileAdded) break;
                 }
             }

@@ -4,8 +4,6 @@ import bo.cave.enums.TileLevel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 public class MapTileTest {
     @Test
     public void constructorMapTileTest() {
@@ -57,8 +55,18 @@ public class MapTileTest {
         MapTile tile = new MapTile("I W U D");
         MapTile tileToConect = new MapTile("I W U R");
 
-        Assertions.assertTrue(tile.canBeConnected(tileToConect, Direction.DOWN));
-        Assertions.assertFalse(tile.canBeConnected(tileToConect, Direction.UP));
-        Assertions.assertFalse(tile.canBeConnected(tileToConect, Direction.LEFT));
+        Assertions.assertTrue(tile.isMatch(tileToConect, Direction.DOWN));
+        Assertions.assertFalse(tile.isMatch(tileToConect, Direction.UP));
+        Assertions.assertFalse(tile.isMatch(tileToConect, Direction.LEFT));
+        Assertions.assertTrue(tile.isMatch(tileToConect, Direction.RIGHT));
+    }
+
+    @Test public void isPathTest(){
+        MapTile tile = new MapTile("I W U D");
+        MapTile tileToConect = new MapTile("I W U R");
+
+        Assertions.assertTrue(tile.isPath(tileToConect, Direction.DOWN));
+        Assertions.assertFalse(tile.isPath(tileToConect, Direction.UP));
+        Assertions.assertFalse(tile.isPath(tileToConect, Direction.LEFT));
     }
 }

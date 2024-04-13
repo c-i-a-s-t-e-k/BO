@@ -46,11 +46,16 @@ public class MapTile {
         exits.addAll(directions.stream().map(Direction::next).toList());
     }
 
-    public boolean canBeConnected(MapTile other, Direction by) {
+    public boolean isMatch(MapTile other, Direction by) {
         if (other == null || other.type == TileType.ROCK) {
             return true;
         } else if (!exits.contains(by)) {
             return !other.exits.contains(by.opposite());
+        } else return other.exits.contains(by.opposite());
+    }
+    public boolean isPath(MapTile other, Direction by) {
+        if (other == null || other.type == TileType.ROCK || !exits.contains(by)) {
+            return false;
         } else return other.exits.contains(by.opposite());
     }
 
