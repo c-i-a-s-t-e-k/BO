@@ -4,6 +4,7 @@ import bo.cave.enums.Direction;
 import bo.cave.enums.TileLevel;
 import bo.cave.enums.TileStatus;
 import bo.cave.enums.TileType;
+import org.javatuples.Pair;
 
 import java.util.*;
 
@@ -13,6 +14,8 @@ public class MapTile {
     private TileLevel level;
     private TileStatus status;
     private final Set<Direction> exits = new HashSet<>();
+
+    private final int pointsForDiscover = 2;
 
     private MapTile() {
         type = TileType.NOTHING;
@@ -35,6 +38,8 @@ public class MapTile {
     public TileLevel getLevel() {
         return level;
     }
+
+    public TileType getType(){return type;}
 
     public List<Direction> getExits() {
         return List.copyOf(exits);
@@ -115,4 +120,14 @@ public class MapTile {
         base[8].exits.add(Direction.RIGHT);
         return base;
     }
+
+    public int achieve(){
+        if(status == TileStatus.NOT_DISCOVERED){
+            status = TileStatus.DISCOVERED;
+            return pointsForDiscover;
+        }
+        return 0;
+    }
+
+
 }

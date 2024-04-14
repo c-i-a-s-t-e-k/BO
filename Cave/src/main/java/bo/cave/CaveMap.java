@@ -1,6 +1,7 @@
 package bo.cave;
 
 import bo.cave.enums.Direction;
+import bo.cave.enums.TileType;
 import org.javatuples.Pair;
 
 import java.io.File;
@@ -166,5 +167,20 @@ public class CaveMap {
         }
 
         return caveMap;
+    }
+
+    public Set<Pair<Direction, TileType>> getPossibleMoves(Pair<Integer, Integer> position) {
+        Set<Pair<Direction, TileType>> moves = new HashSet<>();
+        for (Direction direction : getTile(position).getExits()) {
+            Pair<Integer, Integer> possibleEdgePosition = direction.getNextPosition(position);
+            if (isPlaced(possibleEdgePosition)) {
+                moves.add(new Pair<>(direction,getTile(possibleEdgePosition).getType()));
+            }
+        }
+        return moves;
+    }
+
+    public int achievePosition(Pair<Integer, Integer> position) {
+        return getTile(position).achieve();
     }
 }

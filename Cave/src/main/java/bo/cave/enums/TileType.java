@@ -30,4 +30,12 @@ public enum TileType {
         }
         throw new IllegalArgumentException("Invalid tile type: " + name);
     }
+
+    public ResourceType resourceNeed() {
+        return switch (this){
+            case CONSTRICTION_I ,CONSTRICTION_II,CONSTRICTION_III,DESCENSION -> ResourceType.LINE;
+            case WATER -> ResourceType.PONTOON;
+            case MIRACLE,NOTHING,ROCK -> ResourceType.NOTHING;
+        };
+    }
 }
