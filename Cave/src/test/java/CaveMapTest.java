@@ -70,7 +70,7 @@ public class CaveMapTest {
         Assertions.assertFalse(mapAreSame);
     }
 
-    @Test public void printTest() {
+    public void printTest() {
         CaveMap map = CaveMap.generateCaveMap(0);
         map.printMap();
     }

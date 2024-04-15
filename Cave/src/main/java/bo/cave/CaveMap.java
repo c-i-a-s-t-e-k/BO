@@ -191,8 +191,8 @@ public class CaveMap {
             Collections.addAll(lines, "", "", "");
             linesLength += 3;
             for (int j = 0; j < mapSize; j++) {
-                if (getTile(new Pair<>(i,j)) != null){
-                String[] tileString = getTile(new Pair<>(i,j)).getLinesToPrint();
+                if (getTile(new Pair<>(j,i)) != null){
+                String[] tileString = getTile(new Pair<>(j,i)).getLinesToPrint();
                 for(int k = linesLength-3; k < linesLength; k++){
                     lines.set(k, lines.get(k) + tileString[k - linesLength + 3]);
                 }}

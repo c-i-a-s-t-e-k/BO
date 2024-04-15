@@ -2,6 +2,6 @@ package bo.cave;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        CaveMap.generateCaveMap(12345678).printMap();
     }
 }
