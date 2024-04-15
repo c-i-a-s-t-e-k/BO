@@ -1,5 +1,6 @@
-package bo.cave;
+package bo.player;
 
+import bo.cave.CaveMap;
 import bo.cave.enums.Direction;
 import bo.cave.enums.TileType;
 import org.javatuples.Pair;
@@ -12,13 +13,13 @@ public class Player {
     private Pair<Integer,Integer> position;
 
     private int achievedPoints;
-    private State state;
+    private Backpack state;
     private CaveMap map;
 
     public Player(int initX,int initY,CaveMap caveMap){
         position = new Pair<>(initX,initY);
         achievedPoints = 0;
-        state = new State();
+        state = new Backpack();
         map = caveMap;
     }
 

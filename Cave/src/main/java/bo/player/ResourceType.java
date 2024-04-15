@@ -1,4 +1,4 @@
-package bo.cave.enums;
+package bo.player;
 
 public enum ResourceType {
     OXYGEN,

@@ -1,5 +1,7 @@
 package bo.cave.enums;
 
+import bo.player.ResourceType;
+
 public enum TileType {
     WATER,
     MIRACLE,

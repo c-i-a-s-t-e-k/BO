@@ -1,10 +1,13 @@
-package bo.cave;
+package bo.player;
 
 
-import bo.cave.enums.ResourceType;
 import bo.cave.enums.TileType;
 
-public class State {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Backpack {
+    private List<ResourceType> resources = new ArrayList<>(8);
     private static int maxOxygenLevel;
     private static int maxPontoonLevel;
     private static int maxEnergyLevel;
@@ -14,7 +17,7 @@ public class State {
     private int energyLevel;
     private int lineLevel;
 
-    public State(){
+    public Backpack(){
         resetResources();
     }
 
