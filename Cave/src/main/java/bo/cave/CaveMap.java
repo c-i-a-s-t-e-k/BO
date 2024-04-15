@@ -183,4 +183,26 @@ public class CaveMap {
     public int achievePosition(Pair<Integer, Integer> position) {
         return getTile(position).achieve();
     }
+
+    public void printMap(){
+        List<String> lines = new ArrayList<>();
+        int linesLength = lines.size();
+        for (int i = 0; i < mapSize; i++) {
+            Collections.addAll(lines, "", "", "");
+            linesLength += 3;
+            for (int j = 0; j < mapSize; j++) {
+                if (getTile(new Pair<>(i,j)) != null){
+                String[] tileString = getTile(new Pair<>(i,j)).getLinesToPrint();
+                for(int k = linesLength-3; k < linesLength; k++){
+                    lines.set(k, lines.get(k) + tileString[k - linesLength + 3]);
+                }}
+                else for(int k = linesLength-3; k < linesLength; k++){
+                    lines.set(k, lines.get(k) + "░░░░░");
+                }
+            }
+        }
+        for (String line : lines) {
+            System.out.println(line);
+        }
+    }
 }

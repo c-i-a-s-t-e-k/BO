@@ -69,4 +69,21 @@ public class MapTileTest {
         Assertions.assertFalse(tile.isPath(tileToConect, Direction.UP));
         Assertions.assertFalse(tile.isPath(tileToConect, Direction.LEFT));
     }
+
+    public void printingTile() {
+        MapTile tile = new MapTile("I W U D");
+        for (String string : tile.getLinesToPrint()){
+            System.out.println(string);
+        }
+
+        MapTile tile2 = new MapTile("I C3 L D");
+        for (String string : tile2.getLinesToPrint()){
+            System.out.println(string);
+        }
+
+        MapTile tile3 = new MapTile("I R L D");
+        for (String string : tile3.getLinesToPrint()){
+            System.out.println(string);
+        }
+    }
 }

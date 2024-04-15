@@ -129,5 +129,30 @@ public class MapTile {
         return 0;
     }
 
+    public String[] getLinesToPrint(){
+        String[] lines = new String[3];
+        if(this.exits.contains(Direction.UP))
+            lines[0] = "┌   ┐";
+        else lines[0] = "┌───┐";
+
+        if(this.exits.contains(Direction.DOWN))
+            lines[2] = "└   ┘";
+        else lines[2] = "└───┘";
+
+        String leftChar = "  ";
+        String rightChar = "  ";
+        if (!this.exits.contains(Direction.LEFT)) {leftChar = "│ ";}
+        if (!this.exits.contains(Direction.RIGHT)) {rightChar = " │";}
+        lines[1] = leftChar + this.type + rightChar;
+
+        if(this.level == TileLevel.Base){
+            for (int i = 0; i < 3; i++){
+                lines[i] = "\u001b[48;5;22m" + lines[i] + "\u001b[0m";
+            }
+        }
+
+        return lines;
+    }
+
 
 }
