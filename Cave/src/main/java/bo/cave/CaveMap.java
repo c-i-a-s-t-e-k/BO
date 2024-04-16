@@ -7,6 +7,7 @@ import org.javatuples.Pair;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class CaveMap {
     private final int mapSize = 100;
@@ -185,19 +186,26 @@ public class CaveMap {
     }
 
     public void printMap(){
+        int border = 1;
+        int start_x = Math.max(Collections.min(edges).getValue0()-border, 0);
+        int end_x = Math.min(Collections.max(edges).getValue0()+border, mapSize);
+        Pair<Integer, Integer> a = new Pair<>(start_x, end_x);
+        int start_y = Math.max(Collections.min(edges.stream().map(Pair::getValue1).toList())-border, 0);
+        int end_y = Math.min(Collections.max(edges.stream().map(Pair::getValue1).toList())+border, mapSize);
+
         List<String> lines = new ArrayList<>();
         int linesLength = lines.size();
-        for (int i = 0; i < mapSize; i++) {
+        for (int i = start_y; i < end_y; i++) {
             Collections.addAll(lines, "", "", "");
             linesLength += 3;
-            for (int j = 0; j < mapSize; j++) {
+            for (int j = start_x; j < end_x; j++) {
                 if (getTile(new Pair<>(j,i)) != null){
                 String[] tileString = getTile(new Pair<>(j,i)).getLinesToPrint();
                 for(int k = linesLength-3; k < linesLength; k++){
                     lines.set(k, lines.get(k) + tileString[k - linesLength + 3]);
                 }}
                 else for(int k = linesLength-3; k < linesLength; k++){
-                    lines.set(k, lines.get(k) + "░░░░░");
+                    lines.set(k, lines.get(k) + "     ");
                 }
             }
         }
