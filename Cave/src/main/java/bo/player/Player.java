@@ -16,8 +16,8 @@ public class Player {
     private Backpack state;
     private CaveMap map;
 
-    public Player(int initX,int initY,CaveMap caveMap){
-        position = new Pair<>(initX,initY);
+    public Player(CaveMap caveMap){
+        position = caveMap.getBasePosition();
         achievedPoints = 0;
         state = new Backpack();
         map = caveMap;
