@@ -2,6 +2,8 @@ package bo.cave.enums;
 
 import org.javatuples.Pair;
 
+import java.util.Objects;
+
 public enum Direction {
     UP, DOWN, LEFT, RIGHT;
 
@@ -45,5 +47,14 @@ public enum Direction {
             case RIGHT -> new Pair<>(x + 1, y);
             default -> throw new IllegalArgumentException("Invalid direction: " + this);
         };
+    }
+
+    public static Direction secondIsOn(Pair<Integer, Integer> first, Pair<Integer, Integer> second) {
+        if(first.equals(second)) throw new IllegalArgumentException("first and seconds are the same");
+        if(Objects.equals(first.getValue0(), second.getValue0())){
+            return first.getValue1() < second.getValue1() ? DOWN : UP;
+        }else {
+            return first.getValue0() < second.getValue0() ? RIGHT : LEFT;
+        }
     }
 }

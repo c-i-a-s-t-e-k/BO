@@ -11,4 +11,14 @@ public class DirectionTest {
         Assertions.assertEquals(new Pair<>(0,1), Direction.LEFT.getNextPosition(position));
         Assertions.assertEquals(new Pair<>(2,1), Direction.RIGHT.getNextPosition(position));
     }
+
+    @Test public void secondIsOnTest() {
+        Pair<Integer, Integer> position1 = new Pair<>(1,1);
+        Pair<Integer, Integer> position2 = new Pair<>(0,1);
+        Pair<Integer, Integer> position3 = new Pair<>(1,0);
+        Assertions.assertEquals(Direction.LEFT, Direction.secondIsOn(position1, position2));
+        Assertions.assertEquals(Direction.RIGHT, Direction.secondIsOn(position2, position1));
+        Assertions.assertEquals(Direction.UP, Direction.secondIsOn(position1, position3));
+        Assertions.assertEquals(Direction.DOWN, Direction.secondIsOn(position3, position1));
+    }
 }

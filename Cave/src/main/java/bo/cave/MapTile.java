@@ -35,6 +35,14 @@ public class MapTile {
         this.status = TileStatus.NOT_DISCOVERED;
     }
 
+    boolean isConqured(){
+        return status == TileStatus.CONQUERED;
+    }
+    void conquer(){
+        if (status == TileStatus.CONQUERED) throw new RuntimeException("cannot conquer this tile");
+        status = TileStatus.CONQUERED;
+    }
+
     public TileLevel getLevel() {
         return level;
     }

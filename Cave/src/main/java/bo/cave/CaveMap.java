@@ -187,9 +187,10 @@ public class CaveMap {
 
     public void printMap(){
         int border = 1;
+
         int start_x = Math.max(Collections.min(edges).getValue0()-border, 0);
         int end_x = Math.min(Collections.max(edges).getValue0()+border, mapSize);
-        Pair<Integer, Integer> a = new Pair<>(start_x, end_x);
+
         int start_y = Math.max(Collections.min(edges.stream().map(Pair::getValue1).toList())-border, 0);
         int end_y = Math.min(Collections.max(edges.stream().map(Pair::getValue1).toList())+border, mapSize);
 
@@ -212,5 +213,25 @@ public class CaveMap {
         for (String line : lines) {
             System.out.println(line);
         }
+    }
+
+    public boolean canBeScored(Pair<Integer, Integer> position) {
+        MapTile tile = getTile(position);
+        if(tile == null) return false;
+        return tile.isConqured();
+    }
+
+    public int score(Pair<Integer, Integer> position) {
+        return getTile(position).getType().getPoints();
+    }
+
+    public List<Pair<Direction, TileType>> getMovesToBack(List<Pair<Integer, Integer>> positions) {
+        List<Pair<Direction, TileType>> moves = new ArrayList<>();
+        Pair<Integer, Integer> from = positions.get(0);
+        for (Pair<Integer, Integer> to : positions.subList(1, positions.size())) {
+            moves.add(new Pair<Direction, TileType>(Direction.secondIsOn(to, from), getTile(to).getType()));
+            from = to;
+        }
+        return moves;
     }
 }

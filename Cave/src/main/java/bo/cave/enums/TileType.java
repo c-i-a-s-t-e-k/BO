@@ -37,9 +37,10 @@ public enum TileType {
 
     public ResourceType resourceNeed() {
         return switch (this){
-            case CONSTRICTION_I ,CONSTRICTION_II,CONSTRICTION_III,DESCENSION -> ResourceType.LINE;
-            case WATER -> ResourceType.PONTOON;
-            case MIRACLE,NOTHING,ROCK -> ResourceType.NOTHING;
+            case DESCENSION -> ResourceType.LINE;
+            case WATER -> ResourceType.OXYGEN;
+            case MIRACLE,NOTHING,CONSTRICTION_I, CONSTRICTION_II, CONSTRICTION_III -> ResourceType.NOTHING;
+            default -> throw new IllegalArgumentException("Invalid tile type to need");
         };
     }
 
@@ -57,6 +58,32 @@ public enum TileType {
             case NOTHING -> " ";
             default -> throw new IllegalStateException("Unexpected value: " + this);
         };
+    }
+    public int getPoints(){
+        return switch (this){
+            case MIRACLE, CONSTRICTION_I, DESCENSION -> 2;
+            case CONSTRICTION_II, WATER -> 3;
+            case CONSTRICTION_III -> 4;
+            case NOTHING -> 0;
+            default -> throw new IllegalStateException("Unexpected value: " + this);
+        };
+    }
+    public int energyToStep(){
+        return switch (this){
+            case MIRACLE, DESCENSION, WATER, NOTHING -> 1;
+            case CONSTRICTION_I -> 2;
+            case CONSTRICTION_II -> 3;
+            case CONSTRICTION_III -> 4;
+            case ROCK -> 1000000000;
+            default -> throw new IllegalStateException("Unexpected value: " + this);
+        };
+    }
 
+    public int energyToScore(){
+        return switch (this){
+            case CONSTRICTION_I, CONSTRICTION_II, CONSTRICTION_III, NOTHING -> 0;
+            case MIRACLE, WATER, DESCENSION -> 1;
+            default -> throw new IllegalStateException("Unexpected value: " + this);
+        };
     }
 }

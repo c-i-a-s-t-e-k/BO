@@ -22,6 +22,13 @@ public class Player {
         state = new Backpack();
         map = caveMap;
     }
+    public int energyLeft(){
+        return state.foodInBackpack()*5;
+    }
+
+    public void use(ResourceType resource){
+        state.useResource(resource);
+    }
 
     public Set<Pair<Direction, TileType>> getMoves(){
        Set<Pair<Direction, TileType>> possibleMoves = map.getPossibleMoves(position);
@@ -30,7 +37,20 @@ public class Player {
 
     public void makeMove(Pair<Direction, TileType> move){
         position = move.getValue0().getNextPosition(position);
-        state.useResource(move.getValue1().resourceNeed(), 1);//kiedyś można zrobić żeby zawsze brało jakąś inną wartość
-        achievedPoints += map.achievePosition(position);
+        if(map.canBeScored(position))
+            state.useResource(move.getValue1().resourceNeed());//kiedyś można zrobić żeby zawsze brało jakąś inną wartość
+//        achievedPoints += map.achievePosition(position);
+    }
+
+    public Pair<Integer,Integer> getPosition(){
+        return position;
+    }
+
+    public Backpack getState(){
+        return state.clone();
+    }
+
+    public void restockBackpack(){
+        state.fillDefault();
     }
 }

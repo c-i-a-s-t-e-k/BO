@@ -3,7 +3,7 @@ package bo.player;
 public enum ResourceType {
     OXYGEN,
     PONTOON,
-    ENERGY,
+    FOOD,
     LINE,
     NOTHING
 }
