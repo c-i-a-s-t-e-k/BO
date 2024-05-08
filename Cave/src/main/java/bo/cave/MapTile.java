@@ -153,11 +153,11 @@ public class MapTile {
         if (!this.exits.contains(Direction.RIGHT)) {rightChar = " │";}
         lines[1] = leftChar + this.type + rightChar;
 
-        if(this.level == TileLevel.Base){
-            for (int i = 0; i < 3; i++){
-                lines[i] = "\u001b[48;5;22m" + lines[i] + "\u001b[0m";
-            }
-        }
+//        if(this.level == TileLevel.Base){
+//            for (int i = 0; i < 3; i++){
+//                lines[i] = "\u001b[48;5;22m" + lines[i] + "\u001b[0m";
+//            }
+//        }
 
         return lines;
     }

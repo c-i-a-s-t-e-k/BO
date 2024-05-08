@@ -175,7 +175,7 @@ public class CaveMap {
         for (Direction direction : getTile(position).getExits()) {
             Pair<Integer, Integer> possibleEdgePosition = direction.getNextPosition(position);
             if (isPlaced(possibleEdgePosition)) {
-                moves.add(new Pair<>(direction,getTile(possibleEdgePosition).getType()));
+                moves.add(new Pair<>(direction, getTile(possibleEdgePosition).getType()));
             }
         }
         return moves;
@@ -185,14 +185,18 @@ public class CaveMap {
         return getTile(position).achieve();
     }
 
-    public void printMap(){
+    public void printMap() {
+        printMap(null);
+    }
+
+    public void printMap(Pair<Integer, Integer> pos) {
         int border = 1;
 
-        int start_x = Math.max(Collections.min(edges).getValue0()-border, 0);
-        int end_x = Math.min(Collections.max(edges).getValue0()+border, mapSize);
+        int start_x = Math.max(Collections.min(edges).getValue0() - border, 0);
+        int end_x = Math.min(Collections.max(edges).getValue0() + border, mapSize);
 
-        int start_y = Math.max(Collections.min(edges.stream().map(Pair::getValue1).toList())-border, 0);
-        int end_y = Math.min(Collections.max(edges.stream().map(Pair::getValue1).toList())+border, mapSize);
+        int start_y = Math.max(Collections.min(edges.stream().map(Pair::getValue1).toList()) - border, 0);
+        int end_y = Math.min(Collections.max(edges.stream().map(Pair::getValue1).toList()) + border, mapSize);
 
         List<String> lines = new ArrayList<>();
         int linesLength = lines.size();
@@ -200,12 +204,18 @@ public class CaveMap {
             Collections.addAll(lines, "", "", "");
             linesLength += 3;
             for (int j = start_x; j < end_x; j++) {
-                if (getTile(new Pair<>(j,i)) != null){
-                String[] tileString = getTile(new Pair<>(j,i)).getLinesToPrint();
-                for(int k = linesLength-3; k < linesLength; k++){
-                    lines.set(k, lines.get(k) + tileString[k - linesLength + 3]);
-                }}
-                else for(int k = linesLength-3; k < linesLength; k++){
+                if (getTile(new Pair<>(j, i)) != null) {
+                    String color = "";
+                    String end_color = "";
+                    if(pos != null && j == pos.getValue0() && i == pos.getValue1()) {
+                        color = "\033[48;5;210m";
+                        end_color = "\033[0m";
+                    }
+                    String[] tileString = getTile(new Pair<>(j, i)).getLinesToPrint();
+                    for (int k = linesLength - 3; k < linesLength; k++) {
+                        lines.set(k, lines.get(k) + color + tileString[k - linesLength + 3] + end_color);
+                    }
+                } else for (int k = linesLength - 3; k < linesLength; k++) {
                     lines.set(k, lines.get(k) + "     ");
                 }
             }
@@ -217,7 +227,7 @@ public class CaveMap {
 
     public boolean canBeScored(Pair<Integer, Integer> position) {
         MapTile tile = getTile(position);
-        if(tile == null) return false;
+        if (tile == null) return false;
         return tile.isConqured();
     }
 

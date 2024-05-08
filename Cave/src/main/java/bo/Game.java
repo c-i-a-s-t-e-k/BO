@@ -9,6 +9,7 @@ import org.javatuples.Pair;
 
 import javax.swing.text.Position;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -41,7 +42,9 @@ public class Game {
                 player.use(ResourceType.FOOD);
                 turnEnergy = 5;
 
-                for (Pair<Direction, TileType> move : player.getMoves()) {
+                List<Pair<Direction, TileType>> moves = new ArrayList<>(player.getMoves());
+                Collections.shuffle(moves);
+                for (Pair<Direction, TileType> move : moves) {
                     TileType type = move.getValue1();
                     Direction direction = move.getValue0();
                     if (turnEnergy - type.energyToStep() >= 0) {
@@ -75,6 +78,7 @@ public class Game {
 
 
     public GamePath getAcceptablePath() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return path;
     }
+
 }
