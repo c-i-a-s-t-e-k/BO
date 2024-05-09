@@ -57,10 +57,8 @@ public class Backpack implements Cloneable{
     }
 
     public boolean isEnough(TileType tile) {
-        return switch (tile.resourceNeed()) {
-            case NOTHING -> true;
-            case ResourceType resource -> resources.contains(resource);
-        };
+        if (tile.resourceNeed() == ResourceType.NOTHING) return true;
+        return  resources.contains(tile.resourceNeed());
     }
 
     @Override
