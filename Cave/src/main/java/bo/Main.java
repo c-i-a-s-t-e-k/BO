@@ -11,5 +11,4 @@ public class Main {
         game.startGame();
         game.getAcceptablePath().printPath(map);
     }
-
 }

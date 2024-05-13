@@ -1,0 +1,16 @@
+### IntelliJ ###
+.idea/
+*.iws
+*.iml
+out/
+
+### Gradle ###
+.gradle/
+build/
+
+### Java ###
+*.class
+*.jar
+
+# Compiled Java bytecode
+target/

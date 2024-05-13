@@ -20,7 +20,7 @@ public class GamePath {
         statesList.add(player.getState());
     }
 
-    public void printPath(CaveMap map){
+    public void printPath(CaveMap map) {
         for (Pair<Integer, Integer> pair : moveList) {
             System.out.println(pair.getValue0() + " " + pair.getValue1());
             map.printMap(pair);

@@ -7,7 +7,6 @@ import org.javatuples.Pair;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class CaveMap {
     private final int mapSize = 100;
@@ -207,7 +206,7 @@ public class CaveMap {
                 if (getTile(new Pair<>(j, i)) != null) {
                     String color = "";
                     String end_color = "";
-                    if(pos != null && j == pos.getValue0() && i == pos.getValue1()) {
+                    if (pos != null && j == pos.getValue0() && i == pos.getValue1()) {
                         color = "\033[48;5;210m";
                         end_color = "\033[0m";
                     }
