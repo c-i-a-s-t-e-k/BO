@@ -46,7 +46,7 @@ public class Backpack implements Cloneable{
                 return;
             }
             default -> {
-                if(!resources.contains(resource)) throw new RuntimeException("No resource found");
+                if(!resources.contains(resource)) throw new RuntimeException("No resource found. Expected: " + resource);
                 resources.remove(resource);
             }
         }

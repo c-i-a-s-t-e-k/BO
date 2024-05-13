@@ -48,8 +48,10 @@ public class Player{
 
     public void makeMove(Pair<Direction, TileType> move){
         position = move.getValue0().getNextPosition(position);
-        if(map.canBeScored(position))
+//        System.out.println(position);
+//        state.useResource(ResourceType.FOOD);
             state.useResource(move.getValue1().resourceNeed());//kiedyś można zrobić żeby zawsze brało jakąś inną wartość
+//        if(map.canBeScored(position))
 //        achievedPoints += map.achievePosition(position);
     }
 
