@@ -63,6 +63,10 @@ public class Player{
         return state.clone();
     }
 
+    public void showResoucesInBackpack() {
+        state.showResources();
+    }
+
     public void restockBackpack(){
         state.fillDefault();
     }

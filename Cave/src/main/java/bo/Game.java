@@ -76,7 +76,9 @@ public class Game {
                 }
                 else if (neighbour.energyLeft() < calculateCostToBase(neighbour)){
                     System.out.println("energy " + neighbour.energyLeft() + " " + (calculateCostToBase(neighbour) == Integer.MAX_VALUE));
+                    neighbour.showResoucesInBackpack();
                     System.out.println("energy " + currentPlayer.energyLeft() + " " + calculateCostToBase(currentPlayer));
+                    currentPlayer.showResoucesInBackpack();
                     System.out.println(currentPlayer.getState().equals(neighbour.getState()));
                     return currentPlayer.getPosition();
                 }
@@ -87,6 +89,7 @@ public class Game {
     }
 
     List<Pair<Direction, TileType>> getMoves(Pair<Integer, Integer> destination){
+        player.showResoucesInBackpack();
         // BFS
         Set<Pair<Integer, Integer>> visited = new HashSet<>();
         Queue<Pair<Player, List<Pair<Direction, TileType>>>> queue = new ArrayDeque<>();
@@ -102,6 +105,7 @@ public class Game {
                 Player neighbour = new Player(currentPlayer);
                 neighbour.makeMove(neighMove);
                 if (neighbour.getPosition().equals(destination)){
+                    currentList.add(neighMove);
                     return currentList;
                 }
                 else if (!visited.contains(neighbour.getPosition())) {
@@ -134,6 +138,7 @@ public class Game {
             List<Pair<Direction, TileType>> moves = getMoves(destination);
 
             for (int move_i = 0; move_i < min(5, moves.size()); ++move_i) {
+
                 System.out.println("  move " + move_i);
 
 //                System.out.println(moves.size());
@@ -151,10 +156,13 @@ public class Game {
                 player.makeMove(move);
                 System.out.println(move);
                 path.addToPath(player);
+
+
+                player.showResoucesInBackpack();
             }
 
             turnsDone++;
-//            player.use(ResourceType.FOOD);
+            player.use(ResourceType.FOOD);
 //            System.out.println(player.getState().foodInBackpack());
 
         }

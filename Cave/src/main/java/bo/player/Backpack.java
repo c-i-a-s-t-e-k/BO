@@ -10,14 +10,7 @@ public class Backpack implements Cloneable{
     private List<ResourceType> resources = new ArrayList<>(8);
 
     public Backpack() {
-        resources.add(ResourceType.OXYGEN);
-        resources.add(ResourceType.OXYGEN);
-        resources.add(ResourceType.LINE);
-        resources.add(ResourceType.LINE);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
+        fillDefault();
     }
 
     public int foodInBackpack(){
@@ -30,8 +23,10 @@ public class Backpack implements Cloneable{
 
     public void fillDefault(){
         resources.clear();
-        resources.add(ResourceType.OXYGEN);
         resources.add(ResourceType.PONTOON);
+        resources.add(ResourceType.OXYGEN);
+        resources.add(ResourceType.OXYGEN);
+        resources.add(ResourceType.OXYGEN);
         resources.add(ResourceType.LINE);
         resources.add(ResourceType.LINE);
         resources.add(ResourceType.FOOD);
@@ -71,5 +66,9 @@ public class Backpack implements Cloneable{
         } catch (CloneNotSupportedException e) {
             throw new AssertionError(e);
         }
+    }
+
+    void showResources() {
+        System.out.println("Backpack: " + resources.stream().toList());
     }
 }

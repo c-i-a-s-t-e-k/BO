@@ -23,8 +23,8 @@ public class GamePath {
     public void printPath(CaveMap map){
         for (Pair<Integer, Integer> pair : moveList) {
             System.out.println(pair.getValue0() + " " + pair.getValue1());
-//            map.printMap(pair);
-//            System.out.println("\n\n\n\n\n");
+            map.printMap(pair);
+            System.out.println("\n\n\n\n\n");
         }
         System.out.println(moveList.size());
     }
