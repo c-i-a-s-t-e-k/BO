@@ -3,15 +3,13 @@ package bo;
 import bo.cave.CaveMap;
 import bo.cave.enums.Direction;
 import bo.cave.enums.TileType;
+import bo.player.Backpack;
 import bo.player.Player;
 import bo.player.ResourceType;
 import org.javatuples.Pair;
 
 import javax.swing.text.Position;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Game {
     CaveMap map;
@@ -25,54 +23,89 @@ public class Game {
         this.path = new GamePath();
     }
 
+    public int calculateCostToBase(Player player) {
+        Pair<Integer, Integer> base = map.getBasePosition();
+        int cost = 0;
+
+        //BFS
+
+        return cost;
+    }
+
+    public Pair<Integer, Integer> calculateRandomDestination() {
+        Set<Pair<Integer, Integer>> visited = new HashSet<>();
+        Queue<Player> queue = new ArrayDeque<>();
+        queue.add(new Player(player));
+        // choose random destination cell within energyToGetBack
+
+        while (!queue.isEmpty()){
+            Player currentPlayer = queue.poll();
+            for (Pair<Direction, TileType> neighMove : currentPlayer.getMoves()){
+                Player neighbour = new Player(currentPlayer);
+                neighbour.makeMove(neighMove);
+                if (!visited.contains(neighbour.getPosition()) && neighbour.energyLeft() >= calculateCostToBase(neighbour)){
+                    visited.add(neighbour.getPosition());
+                    queue.add(neighbour);
+                }
+                else if(neighbour.energyLeft() < calculateCostToBase(neighbour)){
+                    return currentPlayer.getPosition();
+                }
+            }
+        }
+
+        return map.getBasePosition();
+    }
+
+    List<Pair<Direction, TileType>> getMoves(Pair<Integer, Integer> destination){
+        // BFS
+        Set<Pair<Integer, Integer>> visited = new HashSet<>();
+        Queue<Pair<Player, List<Pair<Direction, TileType>>>> queue = new ArrayDeque<>();
+        queue.add(new Pair<>(new Player(player), new ArrayList<>()));
+        // choose random destination cell within energyToGetBack
+
+        while (!queue.isEmpty()){
+            Pair<Player, List<Pair<Direction, TileType>>> currentPair = queue.poll();
+            Player currentPlayer = currentPair.getValue0();
+            List<Pair<Direction, TileType>> currentList = new ArrayList<>(currentPair.getValue1());
+
+            for (Pair<Direction, TileType> neighMove : currentPlayer.getMoves()){
+                Player neighbour = new Player(currentPlayer);
+                neighbour.makeMove(neighMove);
+                if (neighbour.getPosition().equals(destination)){
+                    return currentList;
+                }
+                if (!visited.contains(neighbour.getPosition())) {
+                    visited.add(neighbour.getPosition());
+                    currentList.add(neighMove);
+                    queue.add(new Pair<>(neighbour, currentList));
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
     public void startGame() {
         Pair<Integer, Integer> base = map.getBasePosition();
         path.addToPath(player);
         int turnsDone = 0;
-        int score = 0;
-        int energyToGetBack = 0;
-//        Random random = new Random();
-        int turnEnergy;
-        List<Pair<Integer, Integer>> round = new ArrayList<>();
-        int prevTurnsDone = -1;
-        while (turnsDone < turnsLimit && prevTurnsDone != turnsDone){
-            prevTurnsDone = turnsDone;
-            round.add(base);
-            while (energyToGetBack < player.energyLeft() - 5 && (turnsLimit - turnsDone) * 5 > energyToGetBack) {
-                player.use(ResourceType.FOOD);
-                turnEnergy = 5;
+//        int score = 0;
+        Pair<Integer, Integer> destination;
 
-                List<Pair<Direction, TileType>> moves = new ArrayList<>(player.getMoves());
-                Collections.shuffle(moves);
-                for (Pair<Direction, TileType> move : moves) {
-                    TileType type = move.getValue1();
-                    Direction direction = move.getValue0();
-                    if (turnEnergy - type.energyToStep() >= 0) {
-                        player.makeMove(move);
-                        energyToGetBack += type.energyToStep();
-                        turnEnergy -= type.energyToStep() + type.energyToScore();
-                        break;
-                    }
-                }
-                round.add(player.getPosition());
+        while (turnsDone < turnsLimit){
+            destination = calculateRandomDestination();
+            List<Pair<Direction, TileType>> moves = getMoves(destination);
+
+            for (Pair<Direction, TileType> move : moves){
+                player.use(ResourceType.FOOD);
+                player.makeMove(move);
                 path.addToPath(player);
                 turnsDone++;
             }
-            turnEnergy = 5;
-            player.use(ResourceType.FOOD);
-            for (Pair<Direction, TileType> move : map.getMovesToBack(round)) {
-                TileType type = move.getValue1();
-                if(turnEnergy - type.energyToStep() < 0) {
-                    turnsDone++;
-                    player.use(ResourceType.FOOD);
-                    turnEnergy = 5;
-                }
-                turnEnergy -= type.energyToStep();
-                player.makeMove(move);
-                path.addToPath(player);
+
+            // return to base
+            if (destination.equals(base)) {
+                player.restockBackpack();
             }
-            round.clear();
-            player.restockBackpack();
         }
     }
 

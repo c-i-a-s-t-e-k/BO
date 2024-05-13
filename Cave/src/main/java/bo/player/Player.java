@@ -9,7 +9,7 @@ import org.javatuples.Pair;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Player {
+public class Player{
     private Pair<Integer,Integer> position;
 
     private int achievedPoints;
@@ -22,12 +22,23 @@ public class Player {
         state = new Backpack();
         map = caveMap;
     }
+
+    public Player(Player other){
+        position = new Pair<>(other.getPosition().getValue0(), other.getPosition().getValue1());
+        achievedPoints = other.getAchievedPoints();
+        state = other.getState().clone();
+        map = other.map;
+    }
     public int energyLeft(){
         return state.foodInBackpack()*5;
     }
 
     public void use(ResourceType resource){
         state.useResource(resource);
+    }
+
+    public int getAchievedPoints(){
+        return achievedPoints;
     }
 
     public Set<Pair<Direction, TileType>> getMoves(){
