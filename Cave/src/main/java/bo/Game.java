@@ -49,7 +49,6 @@ public class Game {
                 }
             }
         }
-
         return Integer.MAX_VALUE;
     }
 
@@ -57,12 +56,14 @@ public class Game {
         Set<Pair<Integer, Integer>> visited = new HashSet<>();
         Queue<Pair<Player, Integer>> queue = new ArrayDeque<>();
         queue.add(new Pair<>(new Player(player), 0));
+        List<Pair<Integer, Integer>> solutions = new ArrayList<>();
         // choose random destination cell within energyToGetBack
 
         while (!queue.isEmpty()){
             Pair<Player, Integer> qp = queue.poll();
             Player currentPlayer = qp.getValue0();
             int currentMoveNumber = qp.getValue1() + 1;
+            boolean isCorner = true;
             for (Pair<Direction, TileType> neighMove : currentPlayer.getMoves()){
                 Player neighbour = new Player(currentPlayer);
                 neighbour.makeMove(neighMove);
@@ -73,14 +74,18 @@ public class Game {
                     if (currentMoveNumber % 5 == 0) {
                         neighbour.use(ResourceType.FOOD);
                     }
+                    isCorner = false;
                 }
                 else if (neighbour.energyLeft() < calculateCostToBase(neighbour)){
-                    return currentPlayer.getPosition();
+                    solutions.add(currentPlayer.getPosition());
                 }
             }
+            if(isCorner)solutions.add(currentPlayer.getPosition());
         }
-
-        return map.getBasePosition();
+        //System.out.println(solutions);
+        if(solutions.isEmpty())return map.getBasePosition();
+        return solutions.get(new Random().nextInt(solutions.size()));
+        //return map.getBasePosition();
     }
 
     List<Pair<Direction, TileType>> getMoves(Pair<Integer, Integer> destination){
@@ -88,6 +93,7 @@ public class Game {
         Set<Pair<Integer, Integer>> visited = new HashSet<>();
         Queue<Pair<Player, List<Pair<Direction, TileType>>>> queue = new ArrayDeque<>();
         queue.add(new Pair<>(new Player(player), new ArrayList<>()));
+
         // choose random destination cell within energyToGetBack
 
         while (!queue.isEmpty()){
@@ -113,12 +119,13 @@ public class Game {
         return new ArrayList<>();
     }
 
-    public void startGame() {
+    public int startGame() {
         Pair<Integer, Integer> base = map.getBasePosition();
         path.addToPath(player);
         int turnsDone = 0;
-//        int score = 0;
+        int score = 0;
         Pair<Integer, Integer> destination;
+        boolean comeToBase = false;
 
         destination = calculateRandomDestination();
         while (turnsDone < turnsLimit){
@@ -130,22 +137,27 @@ public class Game {
 
                 System.out.println(" p: " + player.getPosition());
 
-                if (player.getPosition().equals(base)) {
+                if (player.getPosition().equals(base) && comeToBase) {
                     player.restockBackpack();
                     destination = calculateRandomDestination();
+                    System.out.println("Achieved Base");
+                    comeToBase = false;
                 } else if (player.getPosition().equals(destination)) {
                     destination = base;
+                    comeToBase = true;
                     moves = getMoves(destination);
+                    System.out.println("Achieved destination");
                 }
 
                 Pair<Direction, TileType> move = moves.get(move_i);
-                player.makeMove(move);
+                player.makeMove(move,true);
                 path.addToPath(player);
             }
 
             turnsDone++;
             player.use(ResourceType.FOOD);
         }
+        return player.getAchievedPoints();
     }
 
 

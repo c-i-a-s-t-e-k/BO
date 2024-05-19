@@ -52,6 +52,12 @@ public class Player {
         state.useResource(move.getValue1().resourceNeed());
     }
 
+    public void makeMove(Pair<Direction, TileType> move,boolean achieve) {
+        position = move.getValue0().getNextPosition(position);
+        achievedPoints += map.achievePosition(position);
+        state.useResource(move.getValue1().resourceNeed());
+    }
+
     public Pair<Integer, Integer> getPosition() {
         return position;
     }

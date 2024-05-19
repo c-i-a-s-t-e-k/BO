@@ -36,6 +36,17 @@ public class Backpack implements Cloneable {
         resources.add(ResourceType.FOOD);
         resources.add(ResourceType.FOOD);
         resources.add(ResourceType.FOOD);
+        resources.add(ResourceType.PONTOON);
+        resources.add(ResourceType.OXYGEN);
+        resources.add(ResourceType.OXYGEN);
+        resources.add(ResourceType.LINE);
+        resources.add(ResourceType.LINE);
+        resources.add(ResourceType.FOOD);
+        resources.add(ResourceType.FOOD);
+        resources.add(ResourceType.FOOD);
+        resources.add(ResourceType.FOOD);
+
+
     }
 
     public void useResource(ResourceType resource) {
