@@ -19,10 +19,18 @@ public class Game {
     GamePath path;
     int turnsLimit = 20;
 
+    private Set<Pair<Integer,Integer>> destinations = new HashSet<>();
+
     public Game(CaveMap map, Player player) {
         this.map = map;
         this.player = player;
         this.path = new GamePath();
+    }
+
+    private Game(Game game){
+        this.map = game.map;
+        this.path = new GamePath();
+        this.player =new Player(map);
     }
 
     public int calculateCostToBase(Player player) {
@@ -128,6 +136,8 @@ public class Game {
         boolean comeToBase = false;
 
         destination = calculateRandomDestination();
+        this.destinations.add(destination);
+
         while (turnsDone < turnsLimit){
             System.out.println("TURN " + turnsDone);
             System.out.println("DESTINATION  " + destination);
@@ -140,6 +150,7 @@ public class Game {
                 if (player.getPosition().equals(base) && comeToBase) {
                     player.restockBackpack();
                     destination = calculateRandomDestination();
+                    this.destinations.add(destination);
                     System.out.println("Achieved Base");
                     comeToBase = false;
                 } else if (player.getPosition().equals(destination)) {
@@ -158,6 +169,54 @@ public class Game {
             player.use(ResourceType.FOOD);
         }
         return player.getAchievedPoints();
+    }
+
+    private static List<Pair<Integer,Integer>> getAround(Pair<Integer,Integer> basicPosition){
+
+        int x = basicPosition.getValue0();
+        int y = basicPosition.getValue1();
+
+        List<Pair<Integer, Integer>> positions = new ArrayList<>();
+
+        positions.add(Pair.with(x - 1, y));
+        positions.add(Pair.with(x, y - 1));
+        positions.add(Pair.with(x, y + 1));
+        positions.add(Pair.with(x + 1, y));
+        positions.add(basicPosition);
+
+        return positions;
+
+    }
+
+
+    public Game getNeighbor(){
+        Game neighbor = new Game(this);
+        if (path.isEmpty()) return neighbor;
+        short movesDone = 0;
+        boolean comeToBase = false;
+        List<Pair<Direction, TileType>> moves = new ArrayList<>();
+        for(Pair<Integer,Integer> destination:this.destinations){
+
+            for(Pair<Integer,Integer> alterDestination: Game.getAround(destination)){
+                moves = neighbor.getMoves(alterDestination);
+                if(!moves.isEmpty())break;
+            }
+
+            for (int move_i = 0; move_i < min(5, moves.size()); ++move_i) {
+                Pair<Direction, TileType> move = moves.get(move_i);
+                neighbor.player.makeMove(move,true);
+                neighbor.path.addToPath(neighbor.player);
+            }
+            moves = neighbor.getMoves(neighbor.map.getBasePosition());
+            for (int move_i = 0; move_i < min(5, moves.size()); ++move_i) {
+                Pair<Direction, TileType> move = moves.get(move_i);
+                neighbor.player.makeMove(move,true);
+                neighbor.path.addToPath(neighbor.player);
+            }
+
+        }
+
+        return neighbor;
     }
 
 

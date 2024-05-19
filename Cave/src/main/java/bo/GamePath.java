@@ -28,4 +28,6 @@ public class GamePath {
         }
         System.out.println(moveList.size());
     }
+
+    public boolean isEmpty(){return moveList.isEmpty();}
 }
