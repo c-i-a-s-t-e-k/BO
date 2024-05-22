@@ -8,8 +8,8 @@ public class Main {
         CaveMap map = CaveMap.generateCaveMap(12345678);
         Player player = new Player(map);
         Game game = new Game(map, player);
-        game.startGame();
+        int points = game.startGame();
         game.getAcceptablePath().printPath(map);
+        System.out.println(points);
     }
-
 }

@@ -35,10 +35,11 @@ public class MapTile {
         this.status = TileStatus.NOT_DISCOVERED;
     }
 
-    boolean isConqured(){
+    boolean isConqured() {
         return status == TileStatus.CONQUERED;
     }
-    void conquer(){
+
+    void conquer() {
         if (status == TileStatus.CONQUERED) throw new RuntimeException("cannot conquer this tile");
         status = TileStatus.CONQUERED;
     }
@@ -47,7 +48,9 @@ public class MapTile {
         return level;
     }
 
-    public TileType getType(){return type;}
+    public TileType getType() {
+        return type;
+    }
 
     public List<Direction> getExits() {
         return List.copyOf(exits);
@@ -66,6 +69,7 @@ public class MapTile {
             return !other.exits.contains(by.opposite());
         } else return other.exits.contains(by.opposite());
     }
+
     public boolean isPath(MapTile other, Direction by) {
         if (other == null || other.type == TileType.ROCK || !exits.contains(by)) {
             return false;
@@ -129,28 +133,32 @@ public class MapTile {
         return base;
     }
 
-    public int achieve(){
-        if(status == TileStatus.NOT_DISCOVERED){
+    public int achieve() {
+        if (status == TileStatus.NOT_DISCOVERED) {
             status = TileStatus.DISCOVERED;
             return pointsForDiscover;
         }
         return 0;
     }
 
-    public String[] getLinesToPrint(){
+    public String[] getLinesToPrint() {
         String[] lines = new String[3];
-        if(this.exits.contains(Direction.UP))
+        if (this.exits.contains(Direction.UP))
             lines[0] = "┌   ┐";
         else lines[0] = "┌───┐";
 
-        if(this.exits.contains(Direction.DOWN))
+        if (this.exits.contains(Direction.DOWN))
             lines[2] = "└   ┘";
         else lines[2] = "└───┘";
 
         String leftChar = "  ";
         String rightChar = "  ";
-        if (!this.exits.contains(Direction.LEFT)) {leftChar = "│ ";}
-        if (!this.exits.contains(Direction.RIGHT)) {rightChar = " │";}
+        if (!this.exits.contains(Direction.LEFT)) {
+            leftChar = "│ ";
+        }
+        if (!this.exits.contains(Direction.RIGHT)) {
+            rightChar = " │";
+        }
         lines[1] = leftChar + this.type + rightChar;
 
 //        if(this.level == TileLevel.Base){
