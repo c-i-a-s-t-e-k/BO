@@ -1,6 +1,8 @@
 package bo;
 
 import bo.cave.CaveMap;
+import bo.neighbors.Neighbor;
+import bo.neighbors.NextToDestination;
 import bo.player.Player;
 
 public class Main {
@@ -11,5 +13,9 @@ public class Main {
         int points = game.startGame();
         game.getAcceptablePath().printPath(map);
         System.out.println(points);
+        Neighbor neighbor = new NextToDestination();
+        System.out.println("*********************************************************************");
+        neighbor.getNeighbor(game).getAcceptablePath().printPath(map);;
+
     }
 }
