@@ -184,6 +184,19 @@ public class CaveMap {
         return getTile(position).achieve();
     }
 
+    public void unAchieveAllPositions(){
+       for(int i = 0; i < mapSize; i++){
+           for(int j = 0; j < mapSize; j++){
+               Pair<Integer, Integer> position = new Pair<>(i, i);
+               if(isPlaced(position)){
+                   MapTile tile = getTile(position);
+                   if (tile == null) throw new RuntimeException();
+                   tile.unAchieve();
+               }
+           }
+       }
+    }
+
     public void printMap() {
         printMap(null);
     }

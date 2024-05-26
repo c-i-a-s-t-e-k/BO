@@ -29,8 +29,11 @@ public class Game {
 
     public Game(Game game){
         this.map = game.map;
+        this.map.unAchieveAllPositions();
         this.path = new GamePath();
         this.player =new Player(map);
+        this.turnsLimit = game.turnsLimit;
+        this.destinations = new HashSet<>();
     }
 
     public int calculateCostToBase(Player player) {
@@ -139,25 +142,25 @@ public class Game {
         this.destinations.add(destination);
 
         while (turnsDone < turnsLimit){
-            System.out.println("TURN " + turnsDone);
-            System.out.println("DESTINATION  " + destination);
+            // System.out.println("TURN " + turnsDone);
+            // System.out.println("DESTINATION  " + destination);
             List<Pair<Direction, TileType>> moves = getMoves(destination);
 
             for (int move_i = 0; move_i < min(5, moves.size()); ++move_i) {
 
-                System.out.println(" p: " + player.getPosition());
+                // System.out.println(" p: " + player.getPosition());
 
                 if (player.getPosition().equals(base) && comeToBase) {
                     player.restockBackpack();
                     destination = calculateRandomDestination();
                     this.destinations.add(destination);
-                    System.out.println("Achieved Base");
+                    // System.out.println("Achieved Base");
                     comeToBase = false;
                 } else if (player.getPosition().equals(destination)) {
                     destination = base;
                     comeToBase = true;
                     moves = getMoves(destination);
-                    System.out.println("Achieved destination");
+                    // System.out.println("Achieved destination");
                 }
 
                 Pair<Direction, TileType> move = moves.get(move_i);

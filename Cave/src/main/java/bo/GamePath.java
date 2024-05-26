@@ -28,5 +28,12 @@ public class GamePath {
 //        System.out.println(moveList.size());
     }
 
+
+    public void printPathMoves() {
+        for (Pair<Integer, Integer> pair : moveList) {
+            System.out.println(pair.getValue0() + " " + pair.getValue1());
+        }
+    }
+
     public boolean isEmpty(){return moveList.isEmpty();}
 }
