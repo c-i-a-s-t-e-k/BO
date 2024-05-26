@@ -11,10 +11,10 @@ import java.util.List;
 
 import static java.lang.Integer.min;
 
-public class NextToDestination implements Neighbor{
+public class NextToDestination implements Neighbour {
 
     @Override
-    public Game getNeighbor(Game game, int... args) {
+    public Game getNeighbour(Game game, int... args) {
         Game neighbor = new Game(game);
         GamePath path = game.getAcceptablePath();
         if (path.isEmpty()) return neighbor;

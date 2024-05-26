@@ -23,6 +23,7 @@ public class Game {
 
     public Game(CaveMap map, Player player) {
         this.map = map;
+        this.map.unAchieveAllPositions();
         this.player = player;
         this.path = new GamePath();
     }
