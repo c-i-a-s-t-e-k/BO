@@ -98,20 +98,6 @@ public class CaveMap {
         return mapSize;
     }
 
-    private boolean isInBounds(Pair<Integer, Integer> position) {
-        int x = position.getValue0();
-        int y = position.getValue1();
-        return (0 <= x && x < mapSize) && (0 <= y && y < mapSize);
-    }
-
-    private Collection<Pair<Integer, Integer>> getSurrounded(Pair<Integer, Integer> position) {
-        Collection<Pair<Integer, Integer>> result = new HashSet<>();
-        for (Direction direction : Direction.values()) {
-            if (isInBounds(direction.getNextPosition(position))) result.add(direction.getNextPosition(position));
-        }
-        return result;
-    }
-
     private boolean tryToConnect(Pair<Integer, Integer> place, MapTile tile) {
         if (isPlaced(place))
             return false;
@@ -144,7 +130,7 @@ public class CaveMap {
     public static CaveMap generateCaveMap(long seed) {
         return generateCaveMap(
                 seed,
-                9,
+                Constants.REMOVE_TILES,
                 Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("tiles.txt")).getFile());
     }
 
@@ -181,11 +167,7 @@ public class CaveMap {
         return moves;
     }
 
-    public int achievePosition(Pair<Integer, Integer> position) {
-        return getTile(position).achieve();
-    }
-
-    public void unAchieveAllPositions(){
+    public void unAchieveAllPositions() {
        for(int i = 0; i < mapSize; i++){
            for(int j = 0; j < mapSize; j++){
                Pair<Integer, Integer> position = new Pair<>(i, i);
@@ -238,23 +220,7 @@ public class CaveMap {
         }
     }
 
-    public boolean canBeScored(Pair<Integer, Integer> position) {
-        MapTile tile = getTile(position);
-        if (tile == null) return false;
-        return tile.isConqured();
-    }
-
     public int score(Pair<Integer, Integer> position) {
-        return getTile(position).getType().getPoints();
-    }
-
-    public List<Pair<Direction, TileType>> getMovesToBack(List<Pair<Integer, Integer>> positions) {
-        List<Pair<Direction, TileType>> moves = new ArrayList<>();
-        Pair<Integer, Integer> from = positions.getFirst();
-        for (Pair<Integer, Integer> to : positions.subList(1, positions.size())) {
-            moves.add(new Pair<Direction, TileType>(Direction.secondIsOn(to, from), getTile(to).getType()));
-            from = to;
-        }
-        return moves;
+        return (!getTile(position).isConqured()) ? getTile(position).getType().getPoints() : 0;
     }
 }

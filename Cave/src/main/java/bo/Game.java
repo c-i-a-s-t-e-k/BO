@@ -3,12 +3,10 @@ package bo;
 import bo.cave.CaveMap;
 import bo.cave.enums.Direction;
 import bo.cave.enums.TileType;
-import bo.player.Backpack;
 import bo.player.Player;
 import bo.player.ResourceType;
 import org.javatuples.Pair;
 
-import javax.swing.text.Position;
 import java.util.*;
 
 import static java.lang.Integer.min;
@@ -17,7 +15,6 @@ public class Game {
     public CaveMap map;
     public Player player;
     GamePath path;
-    int turnsLimit = Constants.TURNS_LIMIT;
 
     private Set<Pair<Integer,Integer>> destinations = new HashSet<>();
 
@@ -33,7 +30,6 @@ public class Game {
         this.map.unAchieveAllPositions();
         this.path = new GamePath();
         this.player =new Player(map);
-        this.turnsLimit = game.turnsLimit;
         this.destinations = new HashSet<>();
     }
 
@@ -44,7 +40,7 @@ public class Game {
         Queue<Pair<Player, Integer>> queue = new ArrayDeque<>();
         queue.add(new Pair<>(new Player(player), 0));
 
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Pair<Player, Integer> currentPair = queue.poll();
             Player currentPlayer = currentPair.getValue0();
             Integer prevCost = currentPair.getValue1();
@@ -94,10 +90,8 @@ public class Game {
             }
             if (isCorner) solutions.add(currentPlayer.getPosition());
         }
-        //System.out.println(solutions);
         if (solutions.isEmpty()) return map.getBasePosition();
         return solutions.get(new Random().nextInt(solutions.size()));
-        //return map.getBasePosition();
     }
 
     public List<Pair<Direction, TileType>> getMoves(Pair<Integer, Integer> destination){
@@ -141,26 +135,20 @@ public class Game {
         destination = calculateRandomDestination();
         this.destinations.add(destination);
 
-        while (turnsDone < turnsLimit) {
-            // System.out.println("TURN " + turnsDone);
-            // System.out.println("DESTINATION  " + destination);
+        while (turnsDone < Constants.TURNS_LIMIT) {
             List<Pair<Direction, TileType>> moves = getMoves(destination);
 
             for (int move_i = 0; move_i < min(Constants.MOVES_PER_TURN, moves.size()); ++move_i) {
-
-                // System.out.println(" p: " + player.getPosition());
 
                 if (player.getPosition().equals(base) && comeToBase) {
                     player.restockBackpack();
                     destination = calculateRandomDestination();
                     this.destinations.add(destination);
-                    // System.out.println("Achieved Base");
                     comeToBase = false;
                 } else if (player.getPosition().equals(destination)) {
                     destination = base;
                     comeToBase = true;
                     break;
-                    // System.out.println("Achieved destination");
                 }
 
                 Pair<Direction, TileType> move = moves.get(move_i);
@@ -173,31 +161,24 @@ public class Game {
             if (player.getState().foodInBackpack() > 0) {
                 player.use(ResourceType.FOOD);
             } else if (!player.getPosition().equals(base)) {
-//                throw new RuntimeException("Player is dead");
                 return 0; // death
-//                break;
             }
         }
         return player.getAchievedPoints();
     }
 
-    public static List<Pair<Integer,Integer>> getAround(Pair<Integer, Integer> basicPosition){
-
+    public static List<Pair<Integer, Integer>> getAround(Pair<Integer, Integer> basicPosition) {
         int x = basicPosition.getValue0();
         int y = basicPosition.getValue1();
 
-        List<Pair<Integer, Integer>> positions = new ArrayList<>();
-
-        positions.add(Pair.with(x - 1, y));
-        positions.add(Pair.with(x, y - 1));
-        positions.add(Pair.with(x, y + 1));
-        positions.add(Pair.with(x + 1, y));
-        positions.add(basicPosition);
-
-        return positions;
-
+        return List.of(
+                Pair.with(x - 1, y),
+                Pair.with(x, y - 1),
+                Pair.with(x, y + 1),
+                Pair.with(x + 1, y),
+                basicPosition
+        );
     }
-
 
     public Set<Pair<Integer, Integer>> getDestinations() {
         return new HashSet<>(destinations);
@@ -206,5 +187,4 @@ public class Game {
     public GamePath getAcceptablePath() {
         return path;
     }
-
 }

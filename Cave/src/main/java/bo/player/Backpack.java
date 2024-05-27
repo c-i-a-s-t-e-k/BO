@@ -36,11 +36,13 @@ public class Backpack implements Cloneable {
 
         while (resources.size() > Constants.BACKPACK_CAPACITY) {
             resources.add(new Random().nextBoolean() ? ResourceType.OXYGEN : ResourceType.LINE);
-//            resources.add(ResourceType.OXYGEN);
-//            resources.add(ResourceType.LINE);
         }
 
-        if (!resources.contains(ResourceType.FOOD) || !resources.contains(ResourceType.PONTOON) || !resources.contains(ResourceType.OXYGEN) || !resources.contains(ResourceType.LINE)) {
+        if (!new HashSet<>(resources).containsAll(EnumSet.of(
+                ResourceType.FOOD,
+                ResourceType.PONTOON,
+                ResourceType.OXYGEN,
+                ResourceType.LINE))) {
             throw new RuntimeException("Invalid backpack: " + resources);
         }
     }
@@ -67,9 +69,5 @@ public class Backpack implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError(e);
         }
-    }
-
-    void showResources() {
-        System.out.println("Backpack: " + resources.stream().toList());
     }
 }

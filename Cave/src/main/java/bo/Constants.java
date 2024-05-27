@@ -3,6 +3,8 @@ package bo;
 public class Constants {
     public static final int SEED = 12345678;
 
+    public static final int REMOVE_TILES = 0;
+
     public static final int MAP_SIZE = 100;
 
     public static final int TURNS_LIMIT = 20;

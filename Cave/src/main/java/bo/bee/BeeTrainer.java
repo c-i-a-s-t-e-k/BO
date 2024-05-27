@@ -12,9 +12,6 @@ import java.util.List;
 
 public class BeeTrainer {
     CaveMap map;
-    int populationSize = Constants.BEES_POPULATION_SIZE;
-    int iterations = Constants.BEES_ITERATIONS;
-    int neighbourCount = Constants.BEES_NEIGHBOURS_COUNT;
 
     Neighbour neighbourStrategy;
 
@@ -28,7 +25,7 @@ public class BeeTrainer {
 
         System.out.print("Starting bees scores: ");
         int addedToPopulation = 0;
-        while (addedToPopulation < populationSize) {
+        while (addedToPopulation < Constants.BEES_POPULATION_SIZE) {
             Player player = new Player(map);
             Game game = new Game(map, player);
             int score = game.startGame();
@@ -41,11 +38,11 @@ public class BeeTrainer {
         System.out.println("__________________________________________________");
 
 
-        for (int iter = 0; iter < iterations; iter++) {
+        for (int iter = 0; iter < Constants.BEES_ITERATIONS; iter++) {
             List<Bee> newPopulation = new ArrayList<>();
 
             for (Bee bee : population) {
-                for (int j = 0; j < neighbourCount; j++) {
+                for (int j = 0; j < Constants.BEES_NEIGHBOURS_COUNT; j++) {
                     Neighbour strategy = neighbourStrategy;
                     Game neighbourGame = strategy.getNeighbour(bee.game);
                     int neighbourScore = neighbourGame.startGame();
@@ -55,9 +52,7 @@ public class BeeTrainer {
 
             population.addAll(newPopulation);
             population.sort(Comparator.comparingInt(b -> -b.score));
-            while (population.size() > populationSize) {
-                population.removeLast();
-            }
+            population.subList(Constants.BEES_POPULATION_SIZE, population.size()).clear();
 
             if (iter % 5 == 0) {
                 System.out.println("After iteration nr: " + iter + " | Best Score is: " + population.getFirst().score);
@@ -65,8 +60,7 @@ public class BeeTrainer {
                 for (Bee curr: population){
                     System.out.print(curr.score + " ");
                 }
-                System.out.println();
-                System.out.println("__________________________________________________");
+                System.out.println("\n__________________________________________________");
             }
         }
 
