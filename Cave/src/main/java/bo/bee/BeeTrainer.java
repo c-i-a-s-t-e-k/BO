@@ -1,5 +1,6 @@
 package bo.bee;
 
+import bo.Constants;
 import bo.Game;
 import bo.cave.CaveMap;
 import bo.neighbors.Neighbour;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public class BeeTrainer {
     CaveMap map;
-    int populationSize = 10;
-    int iterations = 100;
-    int neighbourCount = 5;
+    int populationSize = Constants.BEES_POPULATION_SIZE;
+    int iterations = Constants.BEES_ITERATIONS;
+    int neighbourCount = Constants.BEES_NEIGHBOURS_COUNT;
 
     Neighbour neighbourStrategy;
 
@@ -26,12 +27,15 @@ public class BeeTrainer {
         List<Bee> population = new ArrayList<>();
 
         System.out.print("Starting bees scores: ");
-        for (int i = 0; i < populationSize; i++) {
+        int addedToPopulation = 0;
+        while (addedToPopulation < populationSize) {
             Player player = new Player(map);
             Game game = new Game(map, player);
             int score = game.startGame();
+            if (score == 0) continue;
             System.out.print(score + " ");
             population.add(new Bee(game, score));
+            ++addedToPopulation;
         }
         System.out.println();
         System.out.println("__________________________________________________");
@@ -42,25 +46,21 @@ public class BeeTrainer {
 
             for (Bee bee : population) {
                 for (int j = 0; j < neighbourCount; j++) {
-                    try {
-                        Neighbour strategy = neighbourStrategy;
-                        Game neighbourGame = strategy.getNeighbour(bee.game);
-                        int neighbourScore = neighbourGame.startGame();
-                        newPopulation.add(new Bee(neighbourGame, neighbourScore));
-                    } catch (RuntimeException e) {
-                        // Some iterations cause error due to lack of resources, it is perfectly fine
-                    }
+                    Neighbour strategy = neighbourStrategy;
+                    Game neighbourGame = strategy.getNeighbour(bee.game);
+                    int neighbourScore = neighbourGame.startGame();
+                    newPopulation.add(new Bee(neighbourGame, neighbourScore));
                 }
             }
 
             population.addAll(newPopulation);
             population.sort(Comparator.comparingInt(b -> -b.score));
             while (population.size() > populationSize) {
-                population.remove(population.size() - 1);
+                population.removeLast();
             }
 
             if (iter % 5 == 0) {
-                System.out.println("Iteration nr: " + iter + " | Best Score is: " + population.get(0).score);
+                System.out.println("After iteration nr: " + iter + " | Best Score is: " + population.getFirst().score);
                 System.out.print("Bees scores: ");
                 for (Bee curr: population){
                     System.out.print(curr.score + " ");
@@ -70,7 +70,7 @@ public class BeeTrainer {
             }
         }
 
-        Bee bestBee = population.get(0);
+        Bee bestBee = population.getFirst();
         System.out.println("Best score found: " + bestBee.score);
     }
 }

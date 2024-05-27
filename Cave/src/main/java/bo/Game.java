@@ -17,7 +17,7 @@ public class Game {
     public CaveMap map;
     public Player player;
     GamePath path;
-    int turnsLimit = 20;
+    int turnsLimit = Constants.TURNS_LIMIT;
 
     private Set<Pair<Integer,Integer>> destinations = new HashSet<>();
 
@@ -83,7 +83,7 @@ public class Game {
                 if (!visited.contains(neighbour.getPosition()) && neighbour.energyLeft() > calculateCostToBase(neighbour)){
                     visited.add(neighbour.getPosition());
                     queue.add(new Pair<>(neighbour, currentMoveNumber));
-                    if (currentMoveNumber % 5 == 0) {
+                    if (currentMoveNumber % Constants.MOVES_PER_TURN == 0) {
                         neighbour.use(ResourceType.FOOD);
                     }
                     isCorner = false;
@@ -92,10 +92,10 @@ public class Game {
                     solutions.add(currentPlayer.getPosition());
                 }
             }
-            if(isCorner)solutions.add(currentPlayer.getPosition());
+            if (isCorner) solutions.add(currentPlayer.getPosition());
         }
         //System.out.println(solutions);
-        if(solutions.isEmpty())return map.getBasePosition();
+        if (solutions.isEmpty()) return map.getBasePosition();
         return solutions.get(new Random().nextInt(solutions.size()));
         //return map.getBasePosition();
     }
@@ -135,19 +135,18 @@ public class Game {
         Pair<Integer, Integer> base = map.getBasePosition();
         path.addToPath(player);
         int turnsDone = 0;
-        int score = 0;
         Pair<Integer, Integer> destination;
         boolean comeToBase = false;
 
         destination = calculateRandomDestination();
         this.destinations.add(destination);
 
-        while (turnsDone < turnsLimit){
+        while (turnsDone < turnsLimit) {
             // System.out.println("TURN " + turnsDone);
             // System.out.println("DESTINATION  " + destination);
             List<Pair<Direction, TileType>> moves = getMoves(destination);
 
-            for (int move_i = 0; move_i < min(5, moves.size()); ++move_i) {
+            for (int move_i = 0; move_i < min(Constants.MOVES_PER_TURN, moves.size()); ++move_i) {
 
                 // System.out.println(" p: " + player.getPosition());
 
@@ -160,17 +159,24 @@ public class Game {
                 } else if (player.getPosition().equals(destination)) {
                     destination = base;
                     comeToBase = true;
-                    moves = getMoves(destination);
+                    break;
                     // System.out.println("Achieved destination");
                 }
 
                 Pair<Direction, TileType> move = moves.get(move_i);
                 player.makeMove(move,true);
                 path.addToPath(player);
+
             }
 
             turnsDone++;
-            player.use(ResourceType.FOOD);
+            if (player.getState().foodInBackpack() > 0) {
+                player.use(ResourceType.FOOD);
+            } else if (!player.getPosition().equals(base)) {
+//                throw new RuntimeException("Player is dead");
+                return 0; // death
+//                break;
+            }
         }
         return player.getAchievedPoints();
     }

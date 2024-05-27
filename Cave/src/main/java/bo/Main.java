@@ -7,7 +7,8 @@ import bo.neighbors.NextToDestination;
 
 public class Main {
     public static void main(String[] args) {
-        CaveMap map = CaveMap.generateCaveMap(12345678);
+        CaveMap map = CaveMap.generateCaveMap(Constants.SEED);
+        map.printMap();
 
         BeeTrainer beeTrainer = new BeeTrainer(map, new NextToDestination());
         beeTrainer.train();

@@ -1,5 +1,6 @@
 package bo.cave;
 
+import bo.Constants;
 import bo.cave.enums.Direction;
 import bo.cave.enums.TileType;
 import org.javatuples.Pair;
@@ -9,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class CaveMap {
-    private final int mapSize = 100;
+    private final int mapSize = Constants.MAP_SIZE;
     private final MapTile[][] tiles;
     private final Set<Pair<Integer, Integer>> edges;
 
@@ -144,7 +145,7 @@ public class CaveMap {
         return generateCaveMap(
                 seed,
                 9,
-                Thread.currentThread().getContextClassLoader().getResource("tiles.txt").getFile());
+                Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("tiles.txt")).getFile());
     }
 
     public static CaveMap generateCaveMap(long seed, int removedTiles, String pathToTilesBase) {
@@ -211,7 +212,7 @@ public class CaveMap {
         int end_y = Math.min(Collections.max(edges.stream().map(Pair::getValue1).toList()) + border, mapSize);
 
         List<String> lines = new ArrayList<>();
-        int linesLength = lines.size();
+        int linesLength = 0;
         for (int i = start_y; i < end_y; i++) {
             Collections.addAll(lines, "", "", "");
             linesLength += 3;
@@ -249,7 +250,7 @@ public class CaveMap {
 
     public List<Pair<Direction, TileType>> getMovesToBack(List<Pair<Integer, Integer>> positions) {
         List<Pair<Direction, TileType>> moves = new ArrayList<>();
-        Pair<Integer, Integer> from = positions.get(0);
+        Pair<Integer, Integer> from = positions.getFirst();
         for (Pair<Integer, Integer> to : positions.subList(1, positions.size())) {
             moves.add(new Pair<Direction, TileType>(Direction.secondIsOn(to, from), getTile(to).getType()));
             from = to;

@@ -4,9 +4,7 @@ package bo.player;
 import bo.Constants;
 import bo.cave.enums.TileType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Backpack implements Cloneable {
     private List<ResourceType> resources = new ArrayList<>(Constants.BACKPACK_CAPACITY);
@@ -27,39 +25,32 @@ public class Backpack implements Cloneable {
 
     public void fillDefault() {
         resources.clear();
+
+        for (int i = 0; i < Constants.FOOD_IN_BACKPACK; ++i) {
+            resources.add(ResourceType.FOOD);
+        }
+
         resources.add(ResourceType.PONTOON);
         resources.add(ResourceType.OXYGEN);
-        resources.add(ResourceType.OXYGEN);
         resources.add(ResourceType.LINE);
-        resources.add(ResourceType.LINE);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.PONTOON);
-        resources.add(ResourceType.OXYGEN);
-        resources.add(ResourceType.OXYGEN);
-        resources.add(ResourceType.LINE);
-        resources.add(ResourceType.LINE);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
-        resources.add(ResourceType.FOOD);
 
+        while (resources.size() > Constants.BACKPACK_CAPACITY) {
+            resources.add(new Random().nextBoolean() ? ResourceType.OXYGEN : ResourceType.LINE);
+//            resources.add(ResourceType.OXYGEN);
+//            resources.add(ResourceType.LINE);
+        }
 
+        if (!resources.contains(ResourceType.FOOD) || !resources.contains(ResourceType.PONTOON) || !resources.contains(ResourceType.OXYGEN) || !resources.contains(ResourceType.LINE)) {
+            throw new RuntimeException("Invalid backpack: " + resources);
+        }
     }
 
     public void useResource(ResourceType resource) {
-        switch (resource) {
-            case NOTHING -> {
-                return;
+        if (Objects.requireNonNull(resource) != ResourceType.NOTHING) {
+            if (!resources.contains(resource)) {
+                throw new RuntimeException("No resource found. Expected: " + resource);
             }
-            default -> {
-                if (!resources.contains(resource)) {
-                    throw new RuntimeException("No resource found. Expected: " + resource);
-                }
-                resources.remove(resource);
-            }
+            resources.remove(resource);
         }
     }
 
