@@ -54,7 +54,7 @@ public class Player {
 
     public void makeMove(Pair<Direction, TileType> move,boolean achieve) {
         position = move.getValue0().getNextPosition(position);
-        achievedPoints += map.achievePosition(position);
+        achievedPoints += map.score(position);
         state.useResource(move.getValue1().resourceNeed());
     }
 
@@ -64,10 +64,6 @@ public class Player {
 
     public Backpack getState() {
         return state.clone();
-    }
-
-    public void showResoucesInBackpack() {
-        state.showResources();
     }
 
     public void restockBackpack() {

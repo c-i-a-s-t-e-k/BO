@@ -141,6 +141,10 @@ public class MapTile {
         return 0;
     }
 
+    public void unAchieve(){
+        status = TileStatus.NOT_DISCOVERED;
+    }
+
     public String[] getLinesToPrint() {
         String[] lines = new String[3];
         if (this.exits.contains(Direction.UP))

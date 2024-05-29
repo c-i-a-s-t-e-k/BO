@@ -3,12 +3,10 @@ package bo;
 import bo.cave.CaveMap;
 import bo.cave.enums.Direction;
 import bo.cave.enums.TileType;
-import bo.player.Backpack;
 import bo.player.Player;
 import bo.player.ResourceType;
 import org.javatuples.Pair;
 
-import javax.swing.text.Position;
 import java.util.*;
 
 import static java.lang.Integer.min;
@@ -17,20 +15,22 @@ public class Game {
     public CaveMap map;
     public Player player;
     GamePath path;
-    int turnsLimit = 20;
 
     private Set<Pair<Integer,Integer>> destinations = new HashSet<>();
 
     public Game(CaveMap map, Player player) {
         this.map = map;
+        this.map.unAchieveAllPositions();
         this.player = player;
         this.path = new GamePath();
     }
 
     public Game(Game game){
         this.map = game.map;
+        this.map.unAchieveAllPositions();
         this.path = new GamePath();
         this.player =new Player(map);
+        this.destinations = new HashSet<>();
     }
 
     public int calculateCostToBase(Player player) {
@@ -40,7 +40,7 @@ public class Game {
         Queue<Pair<Player, Integer>> queue = new ArrayDeque<>();
         queue.add(new Pair<>(new Player(player), 0));
 
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Pair<Player, Integer> currentPair = queue.poll();
             Player currentPlayer = currentPair.getValue0();
             Integer prevCost = currentPair.getValue1();
@@ -79,7 +79,7 @@ public class Game {
                 if (!visited.contains(neighbour.getPosition()) && neighbour.energyLeft() > calculateCostToBase(neighbour)){
                     visited.add(neighbour.getPosition());
                     queue.add(new Pair<>(neighbour, currentMoveNumber));
-                    if (currentMoveNumber % 5 == 0) {
+                    if (currentMoveNumber % Constants.MOVES_PER_TURN == 0) {
                         neighbour.use(ResourceType.FOOD);
                     }
                     isCorner = false;
@@ -88,12 +88,10 @@ public class Game {
                     solutions.add(currentPlayer.getPosition());
                 }
             }
-            if(isCorner)solutions.add(currentPlayer.getPosition());
+            if (isCorner) solutions.add(currentPlayer.getPosition());
         }
-        //System.out.println(solutions);
-        if(solutions.isEmpty())return map.getBasePosition();
+        if (solutions.isEmpty()) return map.getBasePosition();
         return solutions.get(new Random().nextInt(solutions.size()));
-        //return map.getBasePosition();
     }
 
     public List<Pair<Direction, TileType>> getMoves(Pair<Integer, Integer> destination){
@@ -131,63 +129,56 @@ public class Game {
         Pair<Integer, Integer> base = map.getBasePosition();
         path.addToPath(player);
         int turnsDone = 0;
-        int score = 0;
         Pair<Integer, Integer> destination;
         boolean comeToBase = false;
 
         destination = calculateRandomDestination();
         this.destinations.add(destination);
 
-        while (turnsDone < turnsLimit){
-            System.out.println("TURN " + turnsDone);
-            System.out.println("DESTINATION  " + destination);
+        while (turnsDone < Constants.TURNS_LIMIT) {
             List<Pair<Direction, TileType>> moves = getMoves(destination);
 
-            for (int move_i = 0; move_i < min(5, moves.size()); ++move_i) {
-
-                System.out.println(" p: " + player.getPosition());
+            for (int move_i = 0; move_i < min(Constants.MOVES_PER_TURN, moves.size()); ++move_i) {
 
                 if (player.getPosition().equals(base) && comeToBase) {
                     player.restockBackpack();
                     destination = calculateRandomDestination();
                     this.destinations.add(destination);
-                    System.out.println("Achieved Base");
                     comeToBase = false;
                 } else if (player.getPosition().equals(destination)) {
                     destination = base;
                     comeToBase = true;
-                    moves = getMoves(destination);
-                    System.out.println("Achieved destination");
+                    break;
                 }
 
                 Pair<Direction, TileType> move = moves.get(move_i);
                 player.makeMove(move,true);
                 path.addToPath(player);
+
             }
 
             turnsDone++;
-            player.use(ResourceType.FOOD);
+            if (player.getState().foodInBackpack() > 0) {
+                player.use(ResourceType.FOOD);
+            } else if (!player.getPosition().equals(base)) {
+                return 0; // death
+            }
         }
         return player.getAchievedPoints();
     }
 
-    public static List<Pair<Integer,Integer>> getAround(Pair<Integer, Integer> basicPosition){
-
+    public static List<Pair<Integer, Integer>> getAround(Pair<Integer, Integer> basicPosition) {
         int x = basicPosition.getValue0();
         int y = basicPosition.getValue1();
 
-        List<Pair<Integer, Integer>> positions = new ArrayList<>();
-
-        positions.add(Pair.with(x - 1, y));
-        positions.add(Pair.with(x, y - 1));
-        positions.add(Pair.with(x, y + 1));
-        positions.add(Pair.with(x + 1, y));
-        positions.add(basicPosition);
-
-        return positions;
-
+        return List.of(
+                Pair.with(x - 1, y),
+                Pair.with(x, y - 1),
+                Pair.with(x, y + 1),
+                Pair.with(x + 1, y),
+                basicPosition
+        );
     }
-
 
     public Set<Pair<Integer, Integer>> getDestinations() {
         return new HashSet<>(destinations);
@@ -196,5 +187,4 @@ public class Game {
     public GamePath getAcceptablePath() {
         return path;
     }
-
 }
