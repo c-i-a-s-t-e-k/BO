@@ -55,7 +55,7 @@ public class BeeTrainer {
             population.subList(Constants.BEES_POPULATION_SIZE, population.size()).clear();
 
             if (iter % 5 == 0) {
-                System.out.println("After iteration nr: " + iter + " | Best Score is: " + population.getFirst().score);
+                System.out.println("After iteration nr: " + iter + " | Best Score is: " + population.get(0).score);
                 System.out.print("Bees scores: ");
                 for (Bee curr: population){
                     System.out.print(curr.score + " ");
@@ -64,7 +64,7 @@ public class BeeTrainer {
             }
         }
 
-        Bee bestBee = population.getFirst();
+        Bee bestBee = population.get(0);
         System.out.println("Best score found: " + bestBee.score);
     }
 }
