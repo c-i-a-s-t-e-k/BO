@@ -30,7 +30,7 @@ public class ShuffledPathNeighbour implements Neighbour {
                 if (neighbor.map.isPlaced(newPos)) {
                     neighbor.player.makeMove(move, true);
                     neighbor.getAcceptablePath().addToPath(neighbor.player);
-                    break;  // Move to the next position after a valid move
+                    break;
                 }
             }
 
