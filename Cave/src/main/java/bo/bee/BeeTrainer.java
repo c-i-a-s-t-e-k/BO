@@ -15,6 +15,8 @@ public class BeeTrainer {
 
     Neighbour neighbourStrategy;
 
+    public List<Integer> bestBees = new ArrayList<>();
+
     public BeeTrainer(CaveMap map, Neighbour neighbourStrategy) {
         this.map = map;
         this.neighbourStrategy = neighbourStrategy;
@@ -53,7 +55,7 @@ public class BeeTrainer {
             population.addAll(newPopulation);
             population.sort(Comparator.comparingInt(b -> -b.score));
             population.subList(Constants.BEES_POPULATION_SIZE, population.size()).clear();
-
+            bestBees.add(population.getFirst().score);
             if (iter % 5 == 0) {
                 System.out.println("After iteration nr: " + iter + " | Best Score is: " + population.get(0).score);
                 System.out.print("Bees scores: ");

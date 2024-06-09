@@ -16,7 +16,10 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'org.javatuples:javatuples:1.2'
+    implementation 'org.jfree:jfreechart:1.5.3'
+    implementation 'com.github.sh0nk:matplotlib4j:0.5.0'
 }
+
 
 test {
     useJUnitPlatform()
